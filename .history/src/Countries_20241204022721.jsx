@@ -1,51 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 
-const knownKingdoms = [
-  "Norway", "Tonga", "Lesotho", "Sweden", "Eswatini", "Morocco",
-  "Bhutan", "Jordan", "Netherlands", "Saudi Arabia", "Denmark",
-  "Bahrain", "Belgium", "Spain", "Cambodia", "United Kingdom", "Thailand"
-];
-
 const Countries = () => {
-  const [countries, setCountries] = useState([]);
+  const [kingdoms, setKingdoms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCountries = async () => {
+    const fetchKingdoms = async () => {
       try {
         const response = await fetch("https://restcountries.com/v3.1/all");
         if (!response.ok) {
           throw new Error("Failed to fetch countries data");
         }
         const data = await response.json();
-
-        // Filter countries based on known kingdoms
-        const kingdomCountries = data.filter((country) =>
-          knownKingdoms.includes(country.name.common)
+        const filteredKingdoms = data.filter((country) => 
+          country.kingdoms // Check if the country has a 'kingdoms' property
         );
 
-        const sortedKingdoms = kingdomCountries.sort((a, b) =>
+        const sortedKingdoms = filteredKingdoms.sort((a, b) => 
           a.name.common.localeCompare(b.name.common)
         );
 
-        setCountries(sortedKingdoms);
+        setKingdoms(sortedKingdoms);
         setLoading(false);
       } catch (error) {
         setError(error.message);
         setLoading(false);
       }
     };
-
-    fetchCountries();
+    fetchKingdoms();
   }, []);
 
-  const handleCountryChange = (e) => {
-    const selectedCountryCode = e.target.value;
-    if (selectedCountryCode) {
-      navigate(`/countries/${selectedCountryCode}`);
+  const handleKingdomChange = (e) => {
+    const selectedKingdomCode = e.target.value;
+    if (selectedKingdomCode) {
+      navigate(`/countries/${selectedKingdomCode}`);
     }
   };
 
@@ -55,11 +46,11 @@ const Countries = () => {
   return (
     <div>
       <h1>World Kingdoms</h1>
-      <select className="country-dropdown" onChange={handleCountryChange}>
+      <select className="kingdom-dropdown" onChange={handleKingdomChange}>
         <option value="">Select a Kingdom</option>
-        {countries.map((country) => (
-          <option key={country.cca2} value={country.cca2}>
-            {country.name.common}
+        {kingdoms.map((kingdom) => (
+          <option key={kingdom.cca2} value={kingdom.cca2}>
+            {kingdom.name.common}
           </option>
         ))}
       </select>

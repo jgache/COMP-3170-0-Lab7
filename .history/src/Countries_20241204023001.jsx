@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 
-const knownKingdoms = [
-  "Norway", "Tonga", "Lesotho", "Sweden", "Eswatini", "Morocco",
-  "Bhutan", "Jordan", "Netherlands", "Saudi Arabia", "Denmark",
-  "Bahrain", "Belgium", "Spain", "Cambodia", "United Kingdom", "Thailand"
-];
-
 const Countries = () => {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,10 +15,8 @@ const Countries = () => {
           throw new Error("Failed to fetch countries data");
         }
         const data = await response.json();
-
-        // Filter countries based on known kingdoms
         const kingdomCountries = data.filter((country) =>
-          knownKingdoms.includes(country.name.common)
+          country.name.common.toLowerCase().includes("kingdom")
         );
 
         const sortedKingdoms = kingdomCountries.sort((a, b) =>
